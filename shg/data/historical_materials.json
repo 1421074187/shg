@@ -1,0 +1,178 @@
+{
+  "time_convention": "exp(-i omega t); n+ik",
+  "created": "2026-11-06",
+  "materials": {
+    "nb": {
+      "axes": [
+        "b",
+        "c"
+      ],
+      "nk": {
+        "1064": [
+          [
+            1.96,
+            0
+          ],
+          [
+            2.27,
+            0
+          ]
+        ],
+        "532": [
+          [
+            2.01,
+            0.02
+          ],
+          [
+            2.48,
+            0.07
+          ]
+        ]
+      },
+      "status": "historical user-confirmed input; original measurement provenance not present",
+      "source": "堆叠拟合9.16/polarization_core.py:13"
+    },
+    "mo": {
+      "axes": [
+        "a",
+        "b"
+      ],
+      "nk": {
+        "532": [
+          [
+            0.4832921098245219,
+            0.9373213234631109
+          ],
+          [
+            2.664183577657139,
+            0.06981500883042259
+          ]
+        ],
+        "1064": [
+          [
+            0.7073418429755846,
+            4.429258683213715
+          ],
+          [
+            2.2798666795771343,
+            0.28773612329018894
+          ]
+        ]
+      },
+      "status": "published ellipsometry-model tabulation, not measurements on proposed sample",
+      "doi": "10.1021/acs.nanolett.5c06153",
+      "supplement_doi": "10.1021/acs.nanolett.5c06153.s001",
+      "source_url": "https://ndownloader.figshare.com/files/62858534",
+      "source_pdf_md5": "9098fc878ab4f0412807a5a2dc9a4f9a",
+      "tabulated_epsilon_rows": {
+        "532": {
+          "epsilon": [
+            [
+              -0.645,
+              0.906
+            ],
+            [
+              7.093,
+              0.372
+            ]
+          ],
+          "page": 22,
+          "source_row": "532 -0.645 0.906 7.093 0.372 3.967 0"
+        },
+        "1064": {
+          "epsilon": [
+            [
+              -19.118,
+              6.266
+            ],
+            [
+              5.115,
+              1.312
+            ]
+          ],
+          "page": 32,
+          "source_row": "1064 -19.118 6.266 5.115 1.312 3.563 0"
+        }
+      }
+    },
+    "sio2": {
+      "axes": [
+        "isotropic",
+        "isotropic"
+      ],
+      "nk": {
+        "1064": [
+          [
+            1.45,
+            0
+          ],
+          [
+            1.45,
+            0
+          ]
+        ],
+        "532": [
+          [
+            1.46,
+            0
+          ],
+          [
+            1.46,
+            0
+          ]
+        ]
+      },
+      "status": "OE Supplement 1 Table S1, rounded reference inputs",
+      "doi": "10.1364/OE.565149"
+    },
+    "si": {
+      "axes": [
+        "isotropic",
+        "isotropic"
+      ],
+      "nk": {
+        "1064": [
+          [
+            3.55,
+            0
+          ],
+          [
+            3.55,
+            0
+          ]
+        ],
+        "532": [
+          [
+            4.15,
+            0.04
+          ],
+          [
+            4.15,
+            0.04
+          ]
+        ]
+      },
+      "status": "OE Supplement 1 Table S1, rounded reference inputs",
+      "doi": "10.1364/OE.565149"
+    }
+  },
+  "geometry": {
+    "oxide_nm": 285,
+    "normal_incidence": true,
+    "pump_nm": 1064,
+    "output_nm": 532
+  },
+  "chi": {
+    "baseline": [
+      1,
+      0,
+      0
+    ],
+    "components": [
+      "bbb",
+      "bcc",
+      "cbc"
+    ],
+    "status": "dominant-bbb hypothesis; secondary components are stress tests, not measured 1064-nm values"
+  }
+}

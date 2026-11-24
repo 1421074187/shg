@@ -1,0 +1,42 @@
+{
+  "scenario": "historical_optics_passive_hbn_baseline_not_new_sample_measurements",
+  "fundamental_nm": 1064,
+  "sh_nm": 532,
+  "oxide_nm": 285.0,
+  "upper_nb_nm": {"start": 20, "stop": 200, "step": 5},
+  "lower_nb_nm": {"start": 20, "stop": 200, "step": 5},
+  "hbn_nm": [0, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100],
+  "lower_directed_angles_deg": [90, -90],
+  "input_states": ["L45", "Cplus", "Cminus"],
+  "chi_components": ["bbb", "bcc", "cbc"],
+  "upper_chi_relative_complex_pairs": [[1, 0], [0, 0], [0, 0]],
+  "lower_chi_relative_complex_pairs": [[1, 0], [0, 0], [0, 0]],
+  "quadrature_nodes": 32,
+  "reference": {"bare_nb_nm": 75.4, "input_state": "X"},
+  "polarization_floor_Q": 1e-12,
+  "gain_denominator_floor_Q": 1e-10,
+  "candidate_min_Q": 0.1,
+  "candidate_min_abs_s3": 0.9,
+  "candidates_per_input_and_angle": 5,
+  "thickness_sensitivity_offset_nm": 5.0,
+  "assumptions": [
+    "All geometry ranges are proposed trial settings, not measured sample parameters or optimum thicknesses.",
+    "Normal incidence, monochromatic coherent plane wave, undepleted fundamental field, flat infinite lateral layers.",
+    "Upper Nb b/c axes define laboratory x/y; z points from air into the substrate.",
+    "Lower b=(cos(theta),sin(theta)); c=(-sin(theta),cos(theta)). Angles are directed, not reduced modulo 180 degrees.",
+    "Both Nb flakes use historical nb_reflection optical constants; their original independent measurement provenance is missing.",
+    "Both Nb tensors equal [1,0,0] in relative units. Equality, phases and the zero secondary components are baseline assumptions, not calibrated 1064-nm tensor values.",
+    "hBN basal normal is assumed parallel to z; its transverse index is isotropic and transparent. The Lee formula is a literature candidate, not a measurement of the new sample.",
+    "hBN, all interfaces and substrate nonlinear sources are omitted in this baseline. This does not establish that their experimental SHG is zero.",
+    "No electronic interlayer coupling, excitonic coupling, strain relaxation, finite NA or instrument Jones matrix is modeled.",
+    "Cplus/Cminus mean (1,+i)/sqrt(2) and (1,-i)/sqrt(2), with exp(-i omega t). They are not calibrated experimental L/R labels.",
+    "Q uses one fixed bare 75.4-nm Nb reference with X-linear fundamental light; it is not counts or conversion efficiency.",
+    "Candidate thresholds and sensitivity offsets are deterministic analysis settings, not experimental detection limits, error bars or confidence intervals."
+  ],
+  "hbn_index_source": {
+    "doi": "10.1002/pssb.201800417",
+    "formula": "n^2=1+3.263*lambda_nm^2/(lambda_nm^2-164.4^2)",
+    "reported_wavelength_range_nm": [450, 1200],
+    "status": "formula and range checked against publisher abstract; directional applicability and sample absorption still require confirmation"
+  }
+}

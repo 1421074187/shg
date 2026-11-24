@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NbOCl₂ 堆叠 SHG</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<main>
+  <header><div><p class="eyebrow">NbOCl₂ / hBN / NbOCl₂</p><h1>厚度怎样改变 SHG？</h1><p class="muted">1064 nm 基频光 · 532 nm 反射 · SiO₂（285 nm）/ Si · 法向入射</p></div><span id="mode" class="badge">正在载入</span></header>
+  <form id="settings">
+    <div class="toolbar">
+      <label>hBN 厚度<select id="spacer"><option value="50">50 nm</option></select></label>
+      <label>下层相对上层的转角（°）<input id="angle" type="number" value="90" step="any" required></label>
+      <label>基频光偏振<select id="input"><option value="Cplus">圆偏振 A（相位差 +90°）</option><option value="Cminus">圆偏振 B（相位差 −90°）</option><option value="linear">线偏振（可设方向）</option></select></label>
+      <label id="linear-field" hidden>线偏振方向（°）<input id="linear-angle" type="number" value="45" step="any"></label>
+      <button id="apply" class="primary" type="submit">计算并更新厚度图</button>
+    </div>
+    <details id="material-panel">
+      <summary>自定义 NbOCl₂ 材料参数 <span class="muted">留空使用默认值</span></summary>
+      <p class="help">可只改需要的项目。复数写法如 2.01+0.02i；折射率使用 n+ik，k ≥ 0。下方灰字是默认值。</p>
+      <div class="material-grid" id="materials"></div>
+      <p class="help">这里的“非线性系数”指 χ⁽²⁾，使用共同的相对单位，不是已标定的 pm/V，也不是 d=χ/2。两片的数值、正负号和复相位可以分别设置。</p>
+      <p class="formula">Pᵦ/ε₀ = χbbb Eᵦ² + χbcc E꜀²；P꜀/ε₀ = 2χcbc EᵦE꜀。</p>
+      <button id="reset-materials" type="button">清空材料输入，恢复默认值</button>
+    </details>
+  </form>
+  <div id="status" class="status" role="status" aria-live="polite">正在读取已完成的厚度扫描…</div>
+  <section id="results" aria-label="计算结果">
+    <div class="maps">
+      <section><h2>反射 SHG 强度</h2><p class="muted">固定参考单片的总强度 = 1</p><svg id="intensity-map" class="map" role="img" aria-label="统一参考下的反射 SHG 强度图"></svg><div class="color-bar intensity-bar" aria-hidden="true"></div><div class="legend intensity-legend" id="intensity-legend" aria-label="归一化强度色标"></div><p class="help">不同厚度和参数使用同一色标。点选格点可查看具体数值。</p></section>
+      <section><h2>输出光有多接近圆偏振？</h2><p class="muted">圆偏度 S3/S0：绝对值越接近 1，越接近圆。</p><svg id="stokes-map" class="map" role="img" aria-label="归一化 Stokes S3 厚度图"></svg><div class="color-bar" aria-hidden="true"></div><div class="legend"><span>−1 · 圆</span><span>0 · 线</span><span>+1 · 圆</span></div><p class="help">正负只表示数学旋向；实验左右旋需光路标定。</p></section>
+    </div>
+    <p class="help marker-key">＋ 当前选择　○ 可用的厚度检查点均达标 <span class="muted">（圆偏程度 ≥ 0.9，信号 ≥ 无插层结构，统一参考强度 ≥ 0.1）</span></p>
+    <div class="thickness-controls">
+      <label><span>上层 NbOCl₂ <output id="upper-value">45 nm</output></span><input id="upper" type="range" min="20" max="200" step="5" value="45"></label>
+      <label><span>下层 NbOCl₂ <output id="lower-value">60 nm</output></span><input id="lower" type="range" min="20" max="200" step="5" value="60"></label>
+    </div>
+    <div class="stats" aria-live="polite">
+      <article><p class="muted">当前圆偏度 S3/S0</p><div class="polar-row"><strong id="s3-value">—</strong><svg id="ellipse" viewBox="-40 -40 80 80" role="img" aria-label="输出偏振椭圆"><circle cx="0" cy="0" r="29"></circle><line x1="-34" x2="34" y1="0" y2="0"></line><line x1="0" x2="0" y1="-34" y2="34"></line><path id="polar-path"></path></svg></div><p id="polar-value">—</p></article>
+      <article><p class="muted">SHG 强度 / 固定参考强度</p><strong id="reference-value">—</strong><p id="zero-value">—</p><p class="help" id="gain-value">—</p></article>
+      <article><p class="muted">厚度在 ±5 nm 内变动时，最不圆的值</p><strong id="min-value">—</strong><p id="neighbors-value">—</p><p class="help" id="neighbors-spacers">—</p></article>
+    </div>
+    <div class="presets"><span class="muted">快速选择：上层 / hBN / 下层</span><button data-u="45" data-h="40" data-l="70">45 / 40 / 70 nm</button><button data-u="45" data-h="45" data-l="65">45 / 45 / 65 nm</button><button data-u="45" data-h="50" data-l="60">45 / 50 / 60 nm</button></div>
+    <div class="point-details">
+      <section class="analyzer-section" aria-labelledby="analyzer-title">
+        <h2 id="analyzer-title">反射 SHG 检偏瓣图</h2>
+        <p class="muted">固定基频光偏振，只旋转 532 nm 线检偏器。径向刻度为透过强度 / 固定参考强度。</p>
+        <svg id="analyzer-plot" role="img" aria-label="线检偏器角度与透过强度极坐标图"></svg>
+        <div class="analyzer-legend"><span><i></i>当前结构</span><span><i class="zero"></i>无 hBN 对照</span></div>
+        <label class="analyzer-control"><span>检偏角 <output id="analyzer-angle-value">0°</output></span><input id="analyzer-angle" type="range" min="0" max="180" step="1" value="0"></label>
+        <p id="analyzer-reading" class="muted">—</p>
+        <p class="help">0° 沿上层 Nb 的 b 轴，90° 沿 c 轴。线检偏角扫描的周期是 180°，圆偏度和旋向见 Stokes。</p>
+      </section>
+      <section class="stokes-section"><h2>完整 Stokes 参数</h2><p id="result-label" class="muted">—</p>
+        <div class="table-wrap"><table><thead><tr><th>参数</th><th>含义</th><th>除以固定参考</th><th>偏振比例</th></tr></thead><tbody id="stokes-table"></tbody></table></div>
+        <p class="help">强度分量统一除以固定参考。偏振比例为 Sᵢ/S₀，光强过小时显示“无法判定”。</p>
+        <p class="help">固定参考取历史参数下 75.4 nm 单片 NbOCl₂ 的反射 SHG 总强度，基频光沿 b 轴线偏振，衬底与当前模型相同。</p>
+      </section>
+    </div>
+  </section>
+  <details class="notes"><summary>查看默认值来源、坐标与计算范围</summary>
+    <p>默认 NbOCl₂ 折射率来自本项目历史矢量模型，缺少该新样品的独立标定。默认两片非线性系数均为 χbbb=1、χbcc=χcbc=0；这是基线假设。</p>
+    <p>hBN 仅作为线性层，采用文献候选色散 n²=1+3.263λ²/(λ²−164.4²)，λ 单位 nm。hBN 自身及界面非线性源在本版本中省略，并非已证明为零。没有电子解耦项，也没有新样品实验拟合。</p>
+    <p>空气 → 上层 NbOCl₂ → hBN → 下层 NbOCl₂ → SiO₂（285 nm）→ Si。上层 b/c 轴定义 x/y，z 指向衬底；正角为 x 向 y 的数学转动，下层 b=(cosθ,sinθ)。有向角不自动等同于实验结构手性。</p>
+    <p>使用 exp(−iωt)、n+ik；圆偏振 A/B 分别为 (1,+i)/√2、(1,−i)/√2。S3=2 Im[conj(Ex)Ey]，反射沿 −z。两片体源在同一完整线性结构中按复振幅相加。</p>
+    <p>该程序使用与 SHAARP 做过数值对照的 Python 传播模型，支持三个面内非线性分量。上下片扫描范围为 20–200 nm，hBN 为 30–100 nm 并包含 0 nm 对照，步长 5 nm。</p>
+  </details>
+</main>
+</body></html>
