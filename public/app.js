@@ -73,16 +73,16 @@ async function calculate(){
 }
 function index(ui,li){const d=result.maps;return(d.hbn.indexOf(state.h)*d.upper.length+ui)*d.lower.length+li;}
 function value(name,i){return result.maps[name][i];}
-function color(value,kind){
+function color(value,metric){
   if(!Number.isFinite(value))return 'var(--line)';
-  const x=kind==='intensity'?intensityScale(value):value;
+  const x=metric==='Q'?intensityScale(value):value;
   return `color-mix(in srgb, var(${x<0?'--blue':'--orange'}) ${Math.min(1,Math.abs(x))*100}%, var(--bg))`;
 }
-function makeChart(id,kind){const c={el:$(id),kind,width:0,cells:[],left:56,top:12};charts.push(c);c.el.addEventListener('click',e=>{if(dirty||busy)return;const rect=e.target.closest('[data-ui]');if(!rect)return;state.u=result.maps.upper[Number(rect.dataset.ui)];state.l=result.maps.lower[Number(rect.dataset.li)];render(false);});return c;}
+function makeChart(id,metric){const c={el:$(id),metric,width:0,cells:[],left:56,top:12};charts.push(c);c.el.addEventListener('click',e=>{if(dirty||busy)return;const rect=e.target.closest('[data-ui]');if(!rect)return;state.u=result.maps.upper[Number(rect.dataset.ui)];state.l=result.maps.lower[Number(rect.dataset.li)];render(false);});return c;}
 function layout(c){
   if(!result)return;const width=Math.floor(c.el.parentElement.clientWidth);if(c.width===width&&c.cells.length)return;c.width=width;c.size=width-c.left-12;const height=c.top+c.size+58,d=result.maps,cell=c.size/d.upper.length;
   c.el.setAttribute('viewBox',`0 0 ${width} ${height}`);c.el.setAttribute('height',height);c.el.replaceChildren();c.cells=[];
-  c.el.append(svg('title',{},c.kind==='intensity'?'统一参考下的反射 SHG 强度':'归一化圆偏度'));
+  c.el.append(svg('title',{},c.el.getAttribute('aria-label')));
   c.el.append(svg('desc',{},'横轴下层 NbOCl2 厚度，纵轴上层厚度，单位 nm。每格为一个扫描点；可以使用厚度滑块选点。'));
   for(let ui=0;ui<d.upper.length;ui++)for(let li=0;li<d.lower.length;li++){
     const mark=svg('rect',{x:c.left+li*cell,y:c.top+(d.upper.length-ui-1)*cell,width:cell+.05,height:cell+.05,'data-ui':ui,'data-li':li,class:'cell'});c.el.append(mark);c.cells.push({el:mark,ui,li});
@@ -100,7 +100,15 @@ function layout(c){
 }
 function paint(c){
   const d=result.maps,cell=c.size/d.upper.length;c.rings.replaceChildren();
-  for(const entry of c.cells){const {el,ui,li}=entry,i=index(ui,li),v=value(c.kind==='intensity'?'Q':'s3',i);el.setAttribute('fill',color(v,c.kind));let title=el.firstElementChild;if(!title){title=svg('title');el.append(title);}title.textContent=`上 ${d.upper[ui]} / hBN ${state.h} / 下 ${d.lower[li]} nm；统一参考强度 ${fixed(value('Q',i))}；圆偏度 ${fixed(value('s3',i))}`;
+  for(const {el,ui,li} of c.cells){
+    const i=index(ui,li),v=value(c.metric,i);
+    el.setAttribute('fill',color(v,c.metric));
+    let title=el.firstElementChild;
+    if(!title){title=svg('title');el.append(title);}
+    const details=c.metric==='s1'||c.metric==='s2'
+      ? `${c.metric==='s1'?'s₁':'s₂'} = ${fixed(v)}`
+      : `统一参考强度 ${fixed(value('Q',i))} · 圆偏度 ${fixed(value('s3',i))}`;
+    title.textContent=`上 ${d.upper[ui]} / hBN ${state.h} / 下 ${d.lower[li]} nm · ${details}`;
     if(d.qualified[i])for(const [stroke,width] of [['var(--bg)',3],['var(--fg)',1.2]])c.rings.append(svg('circle',{cx:c.left+(li+.5)*cell,cy:c.top+(d.upper.length-ui-.5)*cell,r:Math.max(3,cell*.38),fill:'none',stroke,'stroke-width':width}));
   }
 }
@@ -211,7 +219,10 @@ async function init(){
       text.style.left=`${intensityScale(value)*100}%`;
       $('intensity-legend').append(text);
     }
-    makeChart('intensity-map','intensity');makeChart('stokes-map','s3');
+    makeChart('intensity-map','Q');
+    makeChart('stokes-map','s3');
+    makeChart('stokes-s1-map','s1');
+    makeChart('stokes-s2-map','s2');
     const observer=new ResizeObserver(()=>charts.forEach(layout));for(const c of charts){layout(c);observer.observe(c.el.parentElement);}
     const analyzerResize=new ResizeObserver(renderAnalyzer);analyzerResize.observe($('analyzer-plot').parentElement);
     render(false);$('mode').textContent='默认基线 · 条件预测';statusForResult();
