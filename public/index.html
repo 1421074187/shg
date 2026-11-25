@@ -26,6 +26,20 @@
     <div class="maps">
       <section><h2>反射 SHG 强度</h2><p class="muted">固定参考单片的总强度 = 1</p><svg id="intensity-map" class="map" role="img" aria-label="统一参考下的反射 SHG 强度图"></svg><div class="color-bar intensity-bar" aria-hidden="true"></div><div class="legend intensity-legend" id="intensity-legend" aria-label="归一化强度色标"></div><p class="help">不同厚度和参数使用同一色标。点选格点可查看具体数值。</p></section>
       <section><h2>输出光有多接近圆偏振？</h2><p class="muted">圆偏度 S3/S0：绝对值越接近 1，越接近圆。</p><svg id="stokes-map" class="map" role="img" aria-label="归一化 Stokes S3 厚度图"></svg><div class="color-bar" aria-hidden="true"></div><div class="legend"><span>−1 · 圆</span><span>0 · 线</span><span>+1 · 圆</span></div><p class="help">正负只表示数学旋向；实验左右旋需光路标定。</p></section>
+      <section>
+        <h2>线偏振分量 s₁ = S₁/S₀</h2>
+        <p class="muted">比较沿上层 Nb 的 b 轴和 c 轴检偏时的强度。</p>
+        <svg id="stokes-s1-map" class="map" role="img" aria-label="归一化 Stokes S1 厚度图"></svg>
+        <div class="color-bar" aria-hidden="true"></div>
+        <div class="legend"><span>−1 · c 轴</span><span>0 · 等强</span><span>+1 · b 轴</span></div>
+      </section>
+      <section>
+        <h2>线偏振分量 s₂ = S₂/S₀</h2>
+        <p class="muted">比较相对上层 Nb 的 b 轴取 +45° 和 −45° 检偏时的强度。</p>
+        <svg id="stokes-s2-map" class="map" role="img" aria-label="归一化 Stokes S2 厚度图"></svg>
+        <div class="color-bar" aria-hidden="true"></div>
+        <div class="legend"><span>−1 · −45°</span><span>0 · 等强</span><span>+1 · +45°</span></div>
+      </section>
     </div>
     <p class="help marker-key">＋ 当前选择　○ 可用的厚度检查点均达标 <span class="muted">（圆偏程度 ≥ 0.9，信号 ≥ 无插层结构，统一参考强度 ≥ 0.1）</span></p>
     <div class="thickness-controls">
