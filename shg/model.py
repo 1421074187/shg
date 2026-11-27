@@ -16,7 +16,7 @@ CONFIG = json.loads((ROOT / 'data/baseline_config.json').read_text(encoding='utf
 HISTORY = json.loads((ROOT / 'data/historical_materials.json').read_text(encoding='utf-8'))
 AXIS = list(range(20, 201, 5))
 SPACERS = CONFIG['hbn_nm']
-VERSION = '2026.11.25'
+VERSION = '2026.11.27'
 COMPONENTS = ['bbb', 'bcc', 'cbc']
 DEFAULT_N = {str(w): {a: complex(*p) for a, p in zip(['b', 'c'], HISTORY['materials']['nb']['nk'][str(w)])}
              for w in (1064, 532)}
